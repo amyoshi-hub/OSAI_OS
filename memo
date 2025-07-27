@@ -2,3 +2,7 @@ qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append 
 
 cd initramfs
 find . | cpio -o -H newc | gzip > ../initramfs.cpio.gz
+
+
+
+usbからqemuで実行するには一旦mountを解除しないと受け付けてくれない
