@@ -21,7 +21,9 @@ staticでbuild
 そしてinitに改名
 
 cd initrafs
-find . | cpio -o -H newc | gzip > ../initramfs.cpio.gz
+
+//find . | cpio -o -H newc | gzip > ../initramfs.cpio.gz
+find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz こっちが正しいかも
 
 qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append "root=/dev/ram0 console=ttyS0"
 で起動ができたらOK
@@ -31,4 +33,8 @@ qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append 
 すると
 sudo qemu-system-x86_64 -drive file=/dev/sda,format=raw -serial stdio
 で起動できるようになる
+
+
+qemu内で
+└─$ qemu-system-x86_64 -kernel bzImage -initrd initramfs.cpio.gz -append "root=/dev/ram0 console=tty0"
 
