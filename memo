@@ -1,0 +1,4 @@
+qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append "root=/dev/ram0 console=ttyS0"
+
+cd initramfs
+find . | cpio -o -H newc | gzip > ../initramfs.cpio.gz
