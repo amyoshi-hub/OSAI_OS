@@ -38,3 +38,10 @@ sudo qemu-system-x86_64 -drive file=/dev/sda,format=raw -serial stdio
 qemu内で
 └─$ qemu-system-x86_64 -kernel bzImage -initrd initramfs.cpio.gz -append "root=/dev/ram0 console=tty0"
 
+serial
+└─$ qemu-system-x86_64 -kernel bzImage -initrd initramfs.cpio.gz -append "root=/dev/ram0 console=ttyS0" -serial stdio
+
+
+network
+└─$ qemu-system-x86_64 -kernel bzImage -initrd initramfs.cpio.gz -append "console=tty0" -netdev user,id=mynet0 -device e1000,netdev=mynet0 -serial stdio
+
