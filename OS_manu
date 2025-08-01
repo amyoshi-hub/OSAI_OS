@@ -45,3 +45,12 @@ serial
 network
 └─$ qemu-system-x86_64 -kernel bzImage -initrd initramfs.cpio.gz -append "console=tty0" -netdev user,id=mynet0 -device e1000,netdev=mynet0 -serial stdio
 
+-m 1024
+などメモリをついかすること
+
+USB完全
+sudo qemu-system-x86_64 \
+  -m 1024M \
+  -drive format=raw,file=/dev/sda \
+  -bios /usr/share/ovmf/OVMF.fd \
+  -serial stdio

@@ -1,0 +1,49 @@
+sudo parted /dev/sda mklabel gpt  # GPTパーティションテーブルを作成
+
+2. EFIパーティションの作成
+
+EFI パーティションは、/dev/sda1 に作成します。通常、EFIパーティションは 300MB 程度に設定することが多いです。
+
+sudo parted /dev/sda mkpart primary fat32 1MiB 300MiB
+sudo parted /dev/sda set 1 esp on  # ESP (EFIシステムパーティション) を指定
+
+次に、/dev/sda1 を vfat フォーマットにします：
+
+sudo mkfs.fat -F32 /dev/sda1
+
+3. メインパーティションの作成
+
+/dev/sda2 にはメインのパーティションを作成します。ここにはLinuxのルートファイルシステムが入ります。例えば、残りのスペース全てを使う場合：
+
+sudo parted /dev/sda mkpart primary ext4 300MiB 100%
+
+そして、このパーティションを ext4 フォーマットにします：
+
+sudo mkfs.ext4 /dev/sda2
+
+4. マウントポイントの設定
+
+    /dev/sda1 を EFI のマウントポイントとして、/boot/efi にマウントします。
+
+    /dev/sda2 は通常のルートパーティションとして / にマウントします。
+
+sudo mount /dev/sda2 /mnt  # ルートパーティション
+sudo mkdir /mnt/boot
+sudo mount /dev/sda1 /mnt/boot/efi  # EFIパーティション
+
+5. EFIパーティションにブートローダーをインストール
+
+もし、systemd-boot を使っているなら、以下のようにブートローダーをインストールします（grub の場合も同様です）：
+
+# 例: systemd-bootをインストールする場合
+bootctl --path=/mnt/boot/efi install
+
+その後、必要なブートエントリを作成します。
+6. 必要なファイルをコピー
+
+必要なカーネルやブートエントリを/mnt/boot/efi/にコピーします。例えば、カーネルを以下のようにコピーします：
+
+sudo cp /path/to/bzImage /mnt/boot/efi/  # bzImageなど
+
+sudo grub-install --target=x86_64-efi --efi-directory=/mnt/boot/efi --bootloader-id=GRUB --recheck --root-directory=/mnt
+
